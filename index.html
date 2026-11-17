@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XolMet | Donde termina el residuo, empieza la energía</title>
+  <meta name="description" content="XolMet: biodigestor doméstico con monitoreo electrónico, instalación, capacitación y acompañamiento local en Morelos. Convierte residuos orgánicos en biogás para uso térmico y digestato." />
+  <meta name="theme-color" content="#001850" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marino: { DEFAULT: '#001850', 700: '#0a2a6b', 50: '#eef2fb' },
+            xol: { DEFAULT: '#FC6400', dark: '#d95400', soft: '#fff1e6' },
+            eco: { DEFAULT: '#308020', dark: '#256318', soft: '#eaf5e6' }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    @keyframes flicker { 0%,100% { transform: scaleY(1) } 50% { transform: scaleY(1.06) translateY(-1px) } }
+    .flame { transform-origin: bottom center; animation: flicker 2.2s ease-in-out infinite; }
+    .bar-fill { width: 0; transition: width 1.2s ease; }
+    details > summary { list-style: none; cursor: pointer; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] .chev { transform: rotate(180deg); }
+    .chev { transition: transform .2s ease; }
+    #car-track { transition: transform .5s ease; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .flame { animation: none; }
+      .bar-fill, #car-track, .chev { transition: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+
+<body class="font-sans text-slate-700 bg-white antialiased">
+
+  <!-- NAVBAR -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#inicio" class="flex items-center gap-2" aria-label="XolMet inicio">
+        <img src="logo.png" alt="Logo XolMet" class="h-10 w-auto" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+        <span style="display:none" class="items-center gap-2">
+          <svg viewBox="0 0 48 48" class="h-9 w-9" aria-hidden="true">
+            <circle cx="24" cy="26" r="17" fill="none" stroke="#001850" stroke-width="4" stroke-dasharray="70 40" stroke-linecap="round"/>
+            <path d="M24 6c5 6 8 10 4 17-2 3-6 3-8 0-3-5-1-10 4-17z" fill="#FC6400"/>
+            <path d="M20 30c4-6 11-5 14-1-3 6-9 8-14 1z" fill="#308020"/>
+          </svg>
+          <span class="text-2xl font-extrabold text-marino tracking-tight">Xol<span class="text-eco">Met</span></span>
+        </span>
+      </a>
+
+      <ul class="hidden lg:flex items-center gap-7 text-sm font-semibold text-marino">
+        <li><a href="#como-funciona" class="hover:text-xol transition">Cómo funciona</a></li>
+        <li><a href="#prototipo" class="hover:text-xol transition">Prototipo</a></li>
+        <li><a href="#tecnologia" class="hover:text-xol transition">Tecnología</a></li>
+        <li><a href="#oferta" class="hover:text-xol transition">Oferta</a></li>
+        <li><a href="#faq" class="hover:text-xol transition">Preguntas</a></li>
+        <li><a href="#contacto" class="bg-xol hover:bg-xol-dark text-white px-5 py-2 rounded-full transition shadow-sm">Solicitar demostración</a></li>
+      </ul>
+
+      <button id="menu-btn" class="lg:hidden p-2 rounded-lg text-marino hover:bg-slate-100" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
+        <svg id="icon-open" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg id="icon-close" class="h-6 w-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </nav>
+
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-200 bg-white">
+      <ul class="px-4 py-4 space-y-1 text-marino font-semibold">
+        <li><a href="#como-funciona" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Cómo funciona</a></li>
+        <li><a href="#prototipo" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Prototipo</a></li>
+        <li><a href="#tecnologia" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Tecnología</a></li>
+        <li><a href="#oferta" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Oferta</a></li>
+        <li><a href="#faq" class="block px-3 py-2 rounded-lg hover:bg-slate-50">Preguntas</a></li>
+        <li><a href="#contacto" class="block px-3 py-2 rounded-lg bg-xol text-white text-center">Solicitar demostración</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section id="inicio" class="relative pt-16 bg-marino text-white overflow-hidden">
+      <div class="absolute inset-0 grid-bg opacity-70"></div>
+      <div class="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-xol/20 blur-3xl"></div>
+      <div class="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-eco/30 blur-3xl"></div>
+
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-12 items-center">
+        <div class="reveal">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-xs font-semibold tracking-wide uppercase">
+            <span class="h-2 w-2 rounded-full bg-xol animate-pulse"></span> Primeras instalaciones en el sur de Morelos
+          </span>
+          <h1 class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight">
+            Tu cocina y tu campo, <span class="text-xol">convertidos en energía.</span>
+          </h1>
+          <p class="mt-6 text-lg text-slate-200 max-w-xl">
+            XolMet es el biodigestor doméstico que transforma residuos orgánicos en <strong>biogás para uso térmico</strong> y <strong>digestato</strong>, con monitoreo electrónico, instalación y acompañamiento técnico local.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <a href="#contacto" class="inline-flex justify-center items-center bg-xol hover:bg-xol-dark text-white font-bold px-8 py-4 rounded-full shadow-lg shadow-xol/30 transition">
+              Solicitar demostración
+              <svg class="ml-2 h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#prototipo" class="inline-flex justify-center items-center border border-white/40 hover:bg-white/10 font-semibold px-8 py-4 rounded-full transition">
+              Ver el equipo
+            </a>
+          </div>
+          <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-200">
+            <li class="flex items-center gap-2"><span class="text-eco-soft">✔</span> Instalación incluida</li>
+            <li class="flex items-center gap-2"><span class="text-eco-soft">✔</span> Capacitación y manual</li>
+            <li class="flex items-center gap-2"><span class="text-eco-soft">✔</span> Soporte local</li>
+          </ul>
+        </div>
+
+        <div class="reveal flex justify-center">
+          <div id="hero-visual" class="relative w-72 h-72 sm:w-96 sm:h-96">
+            <svg id="hero-svg" viewBox="0 0 400 400" class="w-full h-full" role="img" aria-label="Ciclo: residuo, biogás y digestato">
+              <circle cx="200" cy="210" r="150" fill="none" stroke="#308020" stroke-width="14" stroke-linecap="round" stroke-dasharray="520 420" transform="rotate(-30 200 210)"/>
+              <circle cx="200" cy="210" r="150" fill="none" stroke="#3b82a8" stroke-width="14" stroke-linecap="round" stroke-dasharray="260 700" stroke-dashoffset="-560" transform="rotate(-30 200 210)" opacity=".9"/>
+              <polygon points="95,95 140,80 125,125" fill="#308020"/>
+              <g class="flame">
+                <path d="M215 60c38 45 50 80 28 125-14 28-54 30-68 0-20-42 0-78 40-125z" fill="#FC6400"/>
+                <path d="M212 105c20 25 26 45 14 70-8 16-30 17-38 0-11-24 2-44 24-70z" fill="#FFB020"/>
+              </g>
+              <path d="M150 250c0-30 20-55 30-70 10 15 30 40 30 70a30 30 0 0 1-60 0z" fill="none" stroke="#7cc0e0" stroke-width="8"/>
+              <path d="M210 290c10-45 60-60 100-40-5 50-55 75-100 40z" fill="#308020"/>
+              <path d="M225 285c25-15 45-25 70-30" stroke="#eaf5e6" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative border-t border-white/10 bg-marino-700/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm font-semibold">
+          <div>♻️ Residuos → recurso</div>
+          <div>🔥 Biogás para uso térmico</div>
+          <div>📡 Monitoreo electrónico</div>
+          <div>🤝 Acompañamiento local</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEMA -->
+    <section id="problema" class="py-20 lg:py-28 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center reveal">
+          <p class="text-xol font-bold uppercase tracking-wider text-sm">El problema</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-marino">Lo que se tira y lo que se paga cada mes</h2>
+          <p class="mt-4 text-lg text-slate-600">
+            Los residuos orgánicos se mezclan con la basura y se desaprovechan, mientras la compra recurrente de Gas LP sigue pesando en la economía del hogar.
+          </p>
+        </div>
+
+        <div class="mt-14 grid md:grid-cols-3 gap-6">
+          <article class="reveal rounded-2xl border border-slate-200 p-8 text-center">
+            <p class="text-4xl font-extrabold text-marino">40.15 %</p>
+            <p class="mt-2 text-slate-600">de los residuos sólidos urbanos de México es materia orgánica.</p>
+          </article>
+          <article class="reveal rounded-2xl border border-slate-200 p-8 text-center">
+            <p class="text-4xl font-extrabold text-marino">2,210 t/día</p>
+            <p class="mt-2 text-slate-600">de residuos genera Morelos, con 41.148 % de fracción orgánica.</p>
+          </article>
+          <article class="reveal rounded-2xl border border-slate-200 p-8 text-center">
+            <p class="text-4xl font-extrabold text-marino">88 %</p>
+            <p class="mt-2 text-slate-600">de los 100 hogares que consultamos usa Gas LP.</p>
+          </article>
+        </div>
+        <p class="mt-4 text-xs text-slate-500 text-center max-w-3xl mx-auto">
+          Fuente nacional y estatal: SEMARNAT (2026), Diagnóstico Básico para la Gestión Integral de los Residuos 2026. Son cifras de contexto; no equivalen a los residuos disponibles en cada vivienda.
+        </p>
+
+        <div class="reveal mt-14 max-w-4xl mx-auto rounded-2xl bg-marino-50 border border-marino/10 p-6 sm:p-10">
+          <h3 class="text-xl font-bold text-marino">Lo que nos dijeron 100 hogares de Morelos</h3>
+          <div class="mt-6 space-y-5" id="bars">
+            <div>
+              <div class="flex justify-between text-sm font-semibold text-marino"><span>Quiere reducir su gasto energético</span><span>95 %</span></div>
+              <div class="mt-1 h-3 rounded-full bg-white overflow-hidden"><div class="bar-fill h-full bg-eco" data-w="95"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm font-semibold text-marino"><span>Quiere ver una demostración antes de comprar</span><span>89 %</span></div>
+              <div class="mt-1 h-3 rounded-full bg-white overflow-hidden"><div class="bar-fill h-full bg-xol" data-w="89"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm font-semibold text-marino"><span>Compra Gas LP cada 15 días</span><span>82 %</span></div>
+              <div class="mt-1 h-3 rounded-full bg-white overflow-hidden"><div class="bar-fill h-full bg-marino" data-w="82"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm font-semibold text-marino"><span>Gasta entre $400 y $700 MXN al mes en energía</span><span>74 %</span></div>
+              <div class="mt-1 h-3 rounded-full bg-white overflow-hidden"><div class="bar-fill h-full bg-marino-700" data-w="74"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm font-semibold text-marino"><span>Desecha directamente sus residuos orgánicos</span><span>54 %</span></div>
+              <div class="mt-1 h-3 rounded-full bg-white overflow-hidden"><div class="bar-fill h-full bg-xol-dark" data-w="54"></div></div>
+            </div>
+          </div>
+          <p class="mt-5 text-xs text-slate-500">Fuente: sondeo propio de XolMet (2026). Describe únicamente a los hogares consultados; no es generalizable a toda la población de Morelos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section id="como-funciona" class="py-20 lg:py-28 bg-eco-soft">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center reveal">
+          <p class="text-eco font-bold uppercase tracking-wider text-sm">Cómo funciona</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-marino">Digestión anaerobia, a escala de hogar</h2>
+          <p class="mt-4 text-lg text-slate-600">
+            Microorganismos degradan la materia orgánica sin oxígeno dentro de un reactor hermético y la convierten en biogás y digestato.
+          </p>
+        </div>
+
+        <ol class="mt-14 grid md:grid-cols-4 gap-6">
+          <li class="reveal bg-white rounded-2xl p-6 shadow-sm relative">
+            <span class="absolute -top-4 left-6 h-9 w-9 grid place-items-center rounded-full bg-marino text-white font-bold">1</span>
+            <h3 class="mt-4 font-bold text-marino text-lg">Prepara</h3>
+            <p class="mt-2 text-slate-600 text-sm">Mezcla y homogeneiza residuos compatibles (estiércol bovino, residuos frutícolas) con agua.</p>
+          </li>
+          <li class="reveal bg-white rounded-2xl p-6 shadow-sm relative">
+            <span class="absolute -top-4 left-6 h-9 w-9 grid place-items-center rounded-full bg-marino text-white font-bold">2</span>
+            <h3 class="mt-4 font-bold text-marino text-lg">Digiere</h3>
+            <p class="mt-2 text-slate-600 text-sm">El sustrato se degrada dentro del reactor sellado, con sello hidráulico y manejo de condensados.</p>
+          </li>
+          <li class="reveal bg-white rounded-2xl p-6 shadow-sm relative">
+            <span class="absolute -top-4 left-6 h-9 w-9 grid place-items-center rounded-full bg-xol text-white font-bold">3</span>
+            <h3 class="mt-4 font-bold text-marino text-lg">Biogás</h3>
+            <p class="mt-2 text-slate-600 text-sm">El gas se conduce, acondiciona y almacena para su uso térmico.</p>
+          </li>
+          <li class="reveal bg-white rounded-2xl p-6 shadow-sm relative">
+            <span class="absolute -top-4 left-6 h-9 w-9 grid place-items-center rounded-full bg-eco text-white font-bold">4</span>
+            <h3 class="mt-4 font-bold text-marino text-lg">Digestato</h3>
+            <p class="mt-2 text-slate-600 text-sm">Se recupera el digestato, que se caracteriza antes de definir sus aplicaciones.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- PROTOTIPO / CARRUSEL -->
+    <section id="prototipo" class="py-20 lg:py-28 bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center reveal">
+          <p class="text-xol font-bold uppercase tracking-wider text-sm">El equipo</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-marino">Conoce el prototipo XolMet</h2>
+          <p class="mt-4 text-lg text-slate-600">Reactor de 50 L operando en pruebas de campo y laboratorio, con módulo electrónico de monitoreo.</p>
+        </div>
+
+        <div class="reveal mt-10 relative max-w-4xl mx-auto" id="carousel" aria-roledescription="carrusel" aria-label="Fotos del prototipo XolMet">
+          <div class="overflow-hidden rounded-3xl shadow-xl bg-slate-100">
+            <div id="car-track" class="flex"></div>
+          </div>
+          <button id="car-prev" class="hidden absolute left-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-white/90 hover:bg-white shadow grid place-items-center text-marino" aria-label="Foto anterior">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6"/></svg>
+          </button>
+          <button id="car-next" class="hidden absolute right-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-white/90 hover:bg-white shadow grid place-items-center text-marino" aria-label="Foto siguiente">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></svg>
+          </button>
+          <div id="car-dots" class="mt-4 flex justify-center gap-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECNOLOGÍA -->
+    <section id="tecnologia" class="py-20 lg:py-28 bg-marino text-white relative overflow-hidden">
+      <div class="absolute inset-0 grid-bg opacity-50"></div>
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl reveal">
+          <p class="text-xol font-bold uppercase tracking-wider text-sm">Tecnología</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold">Ingeniería sencilla de operar, con datos claros de leer</h2>
+        </div>
+
+        <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="reveal rounded-2xl bg-white/5 border border-white/10 p-7">
+            <div class="text-3xl">🧠</div>
+            <h3 class="mt-4 text-lg font-bold">Módulo electrónico ESP32</h3>
+            <p class="mt-2 text-slate-300 text-sm">Reúne las lecturas del sistema y las muestra en una pantalla LCD.</p>
+          </div>
+          <div class="reveal rounded-2xl bg-white/5 border border-white/10 p-7">
+            <div class="text-3xl">📡</div>
+            <h3 class="mt-4 text-lg font-bold">Tres variables clave</h3>
+            <p class="mt-2 text-slate-300 text-sm">Temperatura, CO₂ y CH₄ (sensor MQ-4) para dar seguimiento a las condiciones internas del proceso.</p>
+          </div>
+          <div class="reveal rounded-2xl bg-white/5 border border-white/10 p-7">
+            <div class="text-3xl">🛡️</div>
+            <h3 class="mt-4 text-lg font-bold">Diseño con seguridad</h3>
+            <p class="mt-2 text-slate-300 text-sm">Reactor hermético, sello hidráulico, válvulas de alivio y manejo de condensados.</p>
+          </div>
+          <div class="reveal rounded-2xl bg-white/5 border border-white/10 p-7">
+            <div class="text-3xl">🔩</div>
+            <h3 class="mt-4 text-lg font-bold">Componentes comerciales</h3>
+            <p class="mt-2 text-slate-300 text-sm">Piezas disponibles en el mercado: reposición sencilla y reparación local.</p>
+          </div>
+          <div class="reveal rounded-2xl bg-white/5 border border-white/10 p-7">
+            <div class="text-3xl">📏</div>
+            <h3 class="mt-4 text-lg font-bold">Escala doméstica</h3>
+            <p class="mt-2 text-slate-300 text-sm">Prototipo de 50 L y versión comercial de ≈200 L en desarrollo, con un radio de instalación aproximado de 1.5 m.</p>
+          </div>
+          <div class="reveal rounded-2xl bg-white/5 border border-white/10 p-7">
+            <div class="text-3xl">🧰</div>
+            <h3 class="mt-4 text-lg font-bold">Fácil de entender</h3>
+            <p class="mt-2 text-slate-300 text-sm">Manual y capacitación para que sepas qué mide el equipo y cómo operarlo.</p>
+          </div>
+        </div>
+
+        <div class="reveal mt-14 rounded-2xl bg-white text-slate-700 overflow-hidden">
+          <div class="px-6 py-4 bg-eco text-white font-bold">XolMet frente a un sistema comercial de referencia</div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead class="bg-slate-100 text-marino">
+                <tr><th class="px-6 py-3">Aspecto</th><th class="px-6 py-3">HomeBiogas 2.0</th><th class="px-6 py-3">XolMet</th></tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr><td class="px-6 py-3 font-semibold">Volumen del sistema</td><td class="px-6 py-3">2 m³ (2,000 L)</td><td class="px-6 py-3">50 L (prototipo) · ≈200 L en desarrollo</td></tr>
+                <tr><td class="px-6 py-3 font-semibold">Monitoreo electrónico</td><td class="px-6 py-3">No especificado en la ficha técnica consultada</td><td class="px-6 py-3">ESP32, temperatura, CO₂, CH₄ y pantalla LCD</td></tr>
+                <tr><td class="px-6 py-3 font-semibold">Acompañamiento</td><td class="px-6 py-3">No comparable con la información publicada</td><td class="px-6 py-3">Diagnóstico, instalación, capacitación y seguimiento local</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="px-6 py-3 text-xs text-slate-500">Fuente: ficha técnica de HomeBiogas 2 (2023) y documentación de XolMet (2026). Las prestaciones del fabricante no son ensayos independientes; las ventajas de XolMet se comprobarán con evaluaciones comparativas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTADO DEL DESARROLLO -->
+    <section id="estado" class="py-20 lg:py-28 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center reveal">
+          <p class="text-eco font-bold uppercase tracking-wider text-sm">Estado del desarrollo</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-marino">Lo que ya funciona y lo que viene</h2>
+          <p class="mt-4 text-lg text-slate-600">Te decimos con claridad en qué etapa estamos: preferimos demostrar antes que prometer.</p>
+        </div>
+
+        <div class="mt-12 grid lg:grid-cols-2 gap-8">
+          <div class="reveal rounded-2xl border border-eco/30 bg-eco-soft p-8">
+            <h3 class="text-xl font-bold text-eco-dark">✔ Ya demostrado en pruebas</h3>
+            <ul class="mt-4 space-y-3 text-slate-700 text-sm">
+              <li>• El prototipo de 50 L genera biogás tras completar el periodo de digestión y alimentación.</li>
+              <li>• El gas producido mantuvo flama durante las pruebas realizadas.</li>
+              <li>• El proceso genera digestato con nutrientes de interés para su posible aprovechamiento.</li>
+              <li>• Módulo de monitoreo integrado para observar las variables del proceso.</li>
+            </ul>
+          </div>
+          <div class="reveal rounded-2xl border border-xol/30 bg-xol-soft p-8">
+            <h3 class="text-xl font-bold text-xol-dark">⏳ En validación</h3>
+            <ul class="mt-4 space-y-3 text-slate-700 text-sm">
+              <li>• Pruebas en condiciones reales y con usuarios externos.</li>
+              <li>• Medición reproducible del volumen y la composición del biogás.</li>
+              <li>• Medición de la posible sustitución de Gas LP.</li>
+              <li>• Calibración de sensores y contraste con mediciones de referencia.</li>
+            </ul>
+          </div>
+        </div>
+
+        <ol class="reveal mt-12 max-w-4xl mx-auto grid sm:grid-cols-3 gap-4 text-center">
+          <li class="rounded-2xl bg-eco text-white p-5"><p class="text-xs uppercase font-bold tracking-wider text-white/80">Hoy</p><p class="mt-1 font-extrabold">Prototipo 50 L</p><p class="text-sm text-white/90">Operando en pruebas</p></li>
+          <li class="rounded-2xl bg-marino text-white p-5"><p class="text-xs uppercase font-bold tracking-wider text-white/80">En desarrollo</p><p class="mt-1 font-extrabold">Versión comercial ≈200 L</p><p class="text-sm text-white/90">Aún no construida ni validada</p></li>
+          <li class="rounded-2xl bg-xol text-white p-5"><p class="text-xs uppercase font-bold tracking-wider text-white/90">Siguiente</p><p class="mt-1 font-extrabold">Demostraciones en hogares</p><p class="text-sm text-white/90">Con diagnóstico previo</p></li>
+        </ol>
+        <p class="mt-4 text-xs text-slate-500 text-center max-w-3xl mx-auto">Los avances provienen de pruebas realizadas por nuestro equipo; no constituyen una validación externa ni garantizan un rendimiento energético.</p>
+      </div>
+    </section>
+
+    <!-- OFERTA -->
+    <section id="oferta" class="py-20 lg:py-28 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center reveal">
+          <p class="text-xol font-bold uppercase tracking-wider text-sm">Oferta integral</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-marino">No solo un reactor: un servicio completo</h2>
+          <p class="mt-4 text-lg text-slate-600">Te acompañamos desde la primera visita hasta el seguimiento, para que el equipo se use y se mantenga.</p>
+        </div>
+
+        <ol class="mt-12 grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
+          <li class="reveal bg-white rounded-2xl p-6 border border-slate-200"><span class="text-xol font-extrabold text-2xl">01</span><h3 class="mt-2 font-bold text-marino">Diagnóstico del sitio</h3><p class="mt-2 text-sm text-slate-600">Verificamos espacio, ventilación y residuos compatibles antes de fabricar.</p></li>
+          <li class="reveal bg-white rounded-2xl p-6 border border-slate-200"><span class="text-xol font-extrabold text-2xl">02</span><h3 class="mt-2 font-bold text-marino">Demostración supervisada</h3><p class="mt-2 text-sm text-slate-600">Te mostramos el funcionamiento y qué residuos admite el sistema.</p></li>
+          <li class="reveal bg-white rounded-2xl p-6 border border-slate-200"><span class="text-xol font-extrabold text-2xl">03</span><h3 class="mt-2 font-bold text-marino">Instalación</h3><p class="mt-2 text-sm text-slate-600">Fabricación bajo pedido, instalación en sitio y verificación de funcionamiento.</p></li>
+          <li class="reveal bg-white rounded-2xl p-6 border border-slate-200"><span class="text-xol font-extrabold text-2xl">04</span><h3 class="mt-2 font-bold text-marino">Capacitación</h3><p class="mt-2 text-sm text-slate-600">Manual de usuario y capacitación en operación, seguridad y mantenimiento.</p></li>
+          <li class="reveal bg-white rounded-2xl p-6 border border-slate-200"><span class="text-xol font-extrabold text-2xl">05</span><h3 class="mt-2 font-bold text-marino">Seguimiento</h3><p class="mt-2 text-sm text-slate-600">Registro de incidencias y soporte técnico local posterior a la instalación.</p></li>
+        </ol>
+
+        <div class="reveal mt-14 grid lg:grid-cols-2 gap-8 items-stretch">
+          <div class="rounded-3xl bg-marino text-white p-8 sm:p-10">
+            <p class="text-xs font-bold uppercase tracking-wider text-xol">Precio integral proyectado</p>
+            <p class="mt-2 text-4xl sm:text-5xl font-extrabold">$12,728.60 <span class="text-lg font-semibold text-slate-300">MXN</span></p>
+            <p class="mt-3 text-slate-300 text-sm">Incluye equipo, instalación, capacitación y atención. Fabricación bajo pedido y venta directa; sujeto a cotización vigente.</p>
+            <div class="mt-6 grid grid-cols-2 gap-4 text-center">
+              <div class="rounded-xl bg-white/10 p-4"><p class="text-2xl font-extrabold text-xol">60 %</p><p class="text-xs text-slate-300">Anticipo · $7,637.16</p></div>
+              <div class="rounded-xl bg-white/10 p-4"><p class="text-2xl font-extrabold text-xol">40 %</p><p class="text-xs text-slate-300">Contra entrega · $5,091.44</p></div>
+            </div>
+          </div>
+
+          <div class="rounded-3xl bg-white border border-slate-200 p-8 sm:p-10">
+            <h3 class="text-xl font-bold text-marino">Compáralo con tu gasto actual</h3>
+            <p class="text-sm text-slate-600 mt-1">Ingresa lo que gastas hoy; el cálculo solo compara cifras, no estima ahorros.</p>
+            <label class="mt-5 block text-sm font-semibold text-marino">Gasto mensual en gas (MXN)
+              <input id="gas" type="number" min="0" inputmode="decimal" placeholder="Ej. 550" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-xol" />
+            </label>
+            <div class="mt-5 space-y-2 text-slate-700">
+              <p>Gasto anual en gas: <span id="anual" class="font-extrabold text-marino">$0</span></p>
+              <p>El precio proyectado equivale a <span id="meses" class="font-extrabold text-xol">—</span> meses de ese gasto.</p>
+            </div>
+            <p class="mt-4 text-xs text-slate-500">La producción real de biogás y la sustitución de Gas LP aún no se han medido; esta comparación no representa un ahorro garantizado.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARA QUIÉN -->
+    <section class="py-20 lg:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center reveal">
+          <p class="text-eco font-bold uppercase tracking-wider text-sm">¿Es para tu hogar?</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-marino">Empezamos por el sur de Morelos</h2>
+          <p class="mt-4 text-lg text-slate-600">La cercanía nos permite hacer diagnósticos, demostraciones e instalaciones con seguimiento real. XolMet es ideal si tu hogar o parcela cumple lo siguiente:</p>
+        </div>
+        <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div class="reveal rounded-2xl bg-eco-soft p-6 text-center"><div class="text-3xl">🔥</div><p class="mt-3 font-semibold text-marino">Consumo habitual de Gas LP</p></div>
+          <div class="reveal rounded-2xl bg-eco-soft p-6 text-center"><div class="text-3xl">♻️</div><p class="mt-3 font-semibold text-marino">Residuos orgánicos compatibles de forma constante</p></div>
+          <div class="reveal rounded-2xl bg-eco-soft p-6 text-center"><div class="text-3xl">🏡</div><p class="mt-3 font-semibold text-marino">Espacio exterior adecuado (≈1.5 m de radio)</p></div>
+          <div class="reveal rounded-2xl bg-eco-soft p-6 text-center"><div class="text-3xl">🙌</div><p class="mt-3 font-semibold text-marino">Disposición a separar los residuos</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-20 lg:py-24 bg-slate-50">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-extrabold text-marino text-center reveal">Preguntas frecuentes</h2>
+        <div class="mt-10 space-y-3 reveal">
+          <details class="group bg-white rounded-xl border border-slate-200 p-5">
+            <summary class="flex justify-between items-center font-semibold text-marino">¿Qué residuos admite?
+              <svg class="chev h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 9l6 6 6-6"/></svg></summary>
+            <p class="mt-3 text-sm text-slate-600">El diseño contempla la codigestión de estiércol bovino y residuos frutícolas con agua, previa mezcla y homogeneización. En la demostración te explicamos qué residuos son compatibles con tu caso.</p>
+          </details>
+          <details class="group bg-white rounded-xl border border-slate-200 p-5">
+            <summary class="flex justify-between items-center font-semibold text-marino">¿Cuánto biogás produce?
+              <svg class="chev h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 9l6 6 6-6"/></svg></summary>
+            <p class="mt-3 text-sm text-slate-600">Todavía estamos midiendo la producción de forma reproducible, por eso no publicamos cifras de rendimiento. Preferimos mostrarte el equipo funcionando que prometerte un número sin medir.</p>
+          </details>
+          <details class="group bg-white rounded-xl border border-slate-200 p-5">
+            <summary class="flex justify-between items-center font-semibold text-marino">¿Cuánto espacio necesito?
+              <svg class="chev h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 9l6 6 6-6"/></svg></summary>
+            <p class="mt-3 text-sm text-slate-600">Un espacio exterior con un radio de instalación aproximado de 1.5 m. Lo confirmamos en el diagnóstico del sitio.</p>
+          </details>
+          <details class="group bg-white rounded-xl border border-slate-200 p-5">
+            <summary class="flex justify-between items-center font-semibold text-marino">¿Cómo se paga?
+              <svg class="chev h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 9l6 6 6-6"/></svg></summary>
+            <p class="mt-3 text-sm text-slate-600">Fabricamos bajo pedido: 60 % de anticipo y 40 % contra entrega. La cotización desglosa equipamiento, instalación, capacitación y atención.</p>
+          </details>
+          <details class="group bg-white rounded-xl border border-slate-200 p-5">
+            <summary class="flex justify-between items-center font-semibold text-marino">¿Puedo ver el equipo antes de decidir?
+              <svg class="chev h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 9l6 6 6-6"/></svg></summary>
+            <p class="mt-3 text-sm text-slate-600">Sí. Una demostración supervisada forma parte del proceso: es lo que más nos piden los hogares consultados.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto" class="py-20 lg:py-28 bg-white">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-5 gap-10">
+        <div class="lg:col-span-2 reveal">
+          <p class="text-xol font-bold uppercase tracking-wider text-sm">Contacto</p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-marino">Solicita una demostración</h2>
+          <p class="mt-4 text-slate-600">Cuéntanos qué residuos generas y cuánto gas usas. Revisaremos si tu hogar es técnicamente elegible y agendaremos una visita de diagnóstico.</p>
+          <ul class="mt-6 space-y-3 text-sm text-slate-700">
+            <li>📧 <span id="mail-label">contacto@xolmet.com</span></li>
+            <li>📱 <span id="wa-label">+52 000 000 0000</span></li>
+            <li>📍 Sur de Morelos, México</li>
+          </ul>
+        </div>
+
+        <form id="contact-form" class="lg:col-span-3 reveal bg-slate-50 rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-5" novalidate>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <label class="block text-sm font-semibold text-marino">Nombre
+              <input name="nombre" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-xol" />
+            </label>
+            <label class="block text-sm font-semibold text-marino">Correo electrónico
+              <input name="correo" type="email" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-xol" />
+            </label>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <label class="block text-sm font-semibold text-marino">Municipio / localidad
+              <input name="municipio" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-xol" />
+            </label>
+            <label class="block text-sm font-semibold text-marino">¿Qué residuos generas?
+              <select name="residuos" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-xol">
+                <option>Restos de cocina / frutas y verduras</option>
+                <option>Estiércol bovino</option>
+                <option>Ambos</option>
+                <option>Otro</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <label class="block text-sm font-semibold text-marino">¿Cuentas con espacio exterior?
+              <select name="espacio" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-xol">
+                <option>Sí</option>
+                <option>No</option>
+                <option>No estoy seguro</option>
+              </select>
+            </label>
+            <label class="block text-sm font-semibold text-marino">Compra de Gas LP
+              <select name="gas" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-xol">
+                <option>Cada 15 días</option>
+                <option>Cada mes</option>
+                <option>Otra frecuencia</option>
+                <option>No uso Gas LP</option>
+              </select>
+            </label>
+          </div>
+          <label class="block text-sm font-semibold text-marino">Mensaje
+            <textarea name="mensaje" rows="3" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-xol"></textarea>
+          </label>
+          <p id="form-msg" class="text-sm font-semibold hidden"></p>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button type="submit" class="flex-1 bg-xol hover:bg-xol-dark text-white font-bold px-6 py-3 rounded-full transition">Enviar por correo</button>
+            <button type="button" id="wa-btn" class="flex-1 bg-eco hover:bg-eco-dark text-white font-bold px-6 py-3 rounded-full transition">Enviar por WhatsApp</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-marino text-slate-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+        <div>
+          <span class="text-xl font-extrabold text-white">Xol<span class="text-eco">Met</span></span>
+          <p class="mt-1 text-slate-400">Donde termina el residuo, empieza la energía.</p>
+        </div>
+        <p>© <span id="year"></span> XolMet · Hecho en Morelos, México.</p>
+      </div>
+      <details class="mt-6 text-xs text-slate-400">
+        <summary class="underline">Fuentes de los datos</summary>
+        <ul class="mt-3 space-y-2">
+          <li>SEMARNAT (2026). Diagnóstico Básico para la Gestión Integral de los Residuos 2026. <a class="underline" href="https://www.gob.mx/semarnat/documentos/diagnostico-basico-para-la-gestion-integral-de-los-residuos-dbgir-2026" target="_blank" rel="noopener">gob.mx/semarnat</a></li>
+          <li>Equipo XolMet (2026). Sondeo de 100 hogares de Morelos y registros de prueba del prototipo.</li>
+          <li>HomeBiogas (2023). HomeBiogas 2 household biogas system technical specifications. <a class="underline" href="https://landing.homebiogas.com/wp-content/uploads/2023/05/HBG2-tech-specs.pdf" target="_blank" rel="noopener">Ficha técnica</a></li>
+        </ul>
+      </details>
+    </div>
+  </footer>
+
+  <script>
+    // =====================================================
+    //  1) TUS DATOS DE CONTACTO
+    // =====================================================
+    const CONTACT_EMAIL = "contacto@xolmet.com";   // <- cambia por tu correo real
+    const WHATSAPP_NUM  = "520000000000";          // <- código de país + número, sin + ni espacios
+
+    // =====================================================
+    //  2) FOTOS DEL CARRUSEL  — AQUÍ AGREGAS MÁS FOTOS
+    //  Pasos: guarda la foto en la carpeta "img" (junto a index.html)
+    //  y copia una línea nueva dentro de la lista, por ejemplo:
+    //    { src: "img/mi-foto.jpg", alt: "Descripción corta", caption: "Texto que aparece abajo" },
+    //  Si una foto no existe, simplemente se omite sin romper la página.
+    // =====================================================
+    const FOTOS = [
+      { src: "img/prototipo-1.jpg", alt: "Prototipo XolMet de 50 litros con módulo electrónico", caption: "Prototipo de 50 L con módulo de monitoreo" },
+      { src: "img/prototipo-2.jpg", alt: "Vista superior del reactor XolMet", caption: "Reactor hermético con salida de biogás" },
+      // { src: "img/prototipo-3.jpg", alt: "", caption: "" },
+    ];
+
+    const PRECIO = 12728.60;
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('mail-label').textContent = CONTACT_EMAIL;
+
+    // ---------- Menú móvil ----------
+    const btn = document.getElementById('menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    const iOpen = document.getElementById('icon-open');
+    const iClose = document.getElementById('icon-close');
+    function toggleMenu(force) {
+      const open = force !== undefined ? force : menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', !open);
+      iOpen.classList.toggle('hidden', open);
+      iClose.classList.toggle('hidden', !open);
+      btn.setAttribute('aria-expanded', open);
+    }
+    btn.addEventListener('click', () => toggleMenu());
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+
+    // ---------- Animaciones ----------
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    const barsIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.dataset.w + '%');
+        barsIO.unobserve(e.target);
+      });
+    }, { threshold: 0.3 });
+    const bars = document.getElementById('bars'); if (bars) barsIO.observe(bars);
+
+    // ---------- Carrusel ----------
+    (function () {
+      const track = document.getElementById('car-track');
+      const dots = document.getElementById('car-dots');
+      const prev = document.getElementById('car-prev');
+      const next = document.getElementById('car-next');
+      const wrap = document.getElementById('carousel');
+      let slides = [], idx = 0, timer = null;
+
+      // Solo se usan las fotos que realmente existen
+      Promise.all(FOTOS.map(f => new Promise(res => {
+        const im = new Image();
+        im.onload = () => res(f);
+        im.onerror = () => res(null);
+        im.src = f.src;
+      }))).then(list => {
+        slides = list.filter(Boolean);
+        render();
+        heroPhoto();
+      });
+
+      function render() {
+        if (!slides.length) {
+          track.innerHTML = '<div class="min-w-full aspect-[16/10] grid place-items-center text-center p-8 text-slate-500"><div><div class="text-5xl">📷</div><p class="mt-3 font-semibold text-marino">Fotos del prototipo próximamente</p><p class="text-sm mt-1">Agrega tus imágenes en la carpeta <code>img/</code> y en la lista FOTOS.</p></div></div>';
+          return;
+        }
+        track.innerHTML = slides.map((s, i) => `
+          <figure class="min-w-full relative bg-slate-900">
+            <img src="${s.src}" alt="${s.alt || ''}" loading="${i ? 'lazy' : 'eager'}" class="w-full aspect-[4/5] sm:aspect-[16/10] object-cover" />
+            ${s.caption ? `<figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-5 text-white text-sm font-semibold">${s.caption}</figcaption>` : ''}
+          </figure>`).join('');
+        dots.innerHTML = slides.map((_, i) => `<button class="h-2.5 rounded-full transition-all ${i === 0 ? 'w-8 bg-xol' : 'w-2.5 bg-slate-300'}" aria-label="Ir a la foto ${i + 1}" data-i="${i}"></button>`).join('');
+        if (slides.length > 1) {
+          prev.classList.remove('hidden'); next.classList.remove('hidden');
+          dots.querySelectorAll('button').forEach(b => b.addEventListener('click', () => go(+b.dataset.i, true)));
+          start();
+        }
+      }
+      function go(i, manual) {
+        idx = (i + slides.length) % slides.length;
+        track.style.transform = `translateX(-${idx * 100}%)`;
+        dots.querySelectorAll('button').forEach((b, k) => {
+          b.className = `h-2.5 rounded-full transition-all ${k === idx ? 'w-8 bg-xol' : 'w-2.5 bg-slate-300'}`;
+        });
+        if (manual) start();
+      }
+      function start() { stop(); timer = setInterval(() => go(idx + 1), 5000); }
+      function stop() { if (timer) clearInterval(timer); }
+      prev.addEventListener('click', () => go(idx - 1, true));
+      next.addEventListener('click', () => go(idx + 1, true));
+      wrap.addEventListener('mouseenter', stop);
+      wrap.addEventListener('mouseleave', () => slides.length > 1 && start());
+      wrap.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') go(idx - 1, true); if (e.key === 'ArrowRight') go(idx + 1, true); });
+      let x0 = null;
+      wrap.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; stop(); }, { passive: true });
+      wrap.addEventListener('touchend', e => {
+        if (x0 === null) return;
+        const dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1), true); else start();
+        x0 = null;
+      });
+
+      // La primera foto disponible reemplaza la ilustración del hero
+      function heroPhoto() {
+        if (!slides.length) return;
+        const box = document.getElementById('hero-visual');
+        const svg = document.getElementById('hero-svg');
+        box.className = 'relative w-72 sm:w-80 lg:w-96 rounded-3xl overflow-hidden shadow-2xl ring-4 ring-white/20';
+        box.innerHTML = `<img src="${slides[0].src}" alt="${slides[0].alt || ''}" class="w-full aspect-[4/5] object-cover" />`;
+      }
+    })();
+
+    // ---------- Comparación con gasto actual ----------
+    const gas = document.getElementById('gas');
+    const anual = document.getElementById('anual');
+    const meses = document.getElementById('meses');
+    function calc() {
+      const m = parseFloat(gas.value) || 0;
+      anual.textContent = (m * 12).toLocaleString('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
+      meses.textContent = m > 0 ? (PRECIO / m).toFixed(1) : '—';
+    }
+    gas.addEventListener('input', calc); calc();
+
+    // ---------- Formulario ----------
+    const form = document.getElementById('contact-form');
+    const msg = document.getElementById('form-msg');
+    function getData() {
+      const d = new FormData(form);
+      const g = k => (d.get(k) || '').toString().trim();
+      return { nombre: g('nombre'), correo: g('correo'), municipio: g('municipio'), residuos: g('residuos'),
+               espacio: g('espacio'), gas: g('gas'), mensaje: g('mensaje') };
+    }
+    function validate(d) {
+      const ok = d.nombre && /^\S+@\S+\.\S+$/.test(d.correo) && d.mensaje;
+      msg.classList.remove('hidden');
+      msg.className = 'text-sm font-semibold ' + (ok ? 'text-eco' : 'text-red-600');
+      msg.textContent = ok ? 'Abriendo tu aplicación…' : 'Completa nombre, un correo válido y tu mensaje.';
+      return ok;
+    }
+    function body(d) {
+      return `Nombre: ${d.nombre}\nCorreo: ${d.correo}\nMunicipio: ${d.municipio}\nResiduos: ${d.residuos}\nEspacio exterior: ${d.espacio}\nCompra de Gas LP: ${d.gas}\n\n${d.mensaje}`;
+    }
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = getData(); if (!validate(d)) return;
+      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Solicitud de demostración XolMet')}&body=${encodeURIComponent(body(d))}`;
+    });
+    document.getElementById('wa-btn').addEventListener('click', () => {
+      const d = getData(); if (!validate(d)) return;
+      window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent('Solicitud de demostración XolMet\n' + body(d))}`, '_blank', 'noopener');
+    });
+  </script>
+</body>
+</html>
